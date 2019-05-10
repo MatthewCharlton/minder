@@ -7,7 +7,7 @@ You can create a config file to commit with your project. Must be named "auditor
 ```javascript
 {
   "severity": "critical",
-  "package-manager": "yarn",
+  "package-manager": "npm",
   "report": true,
   "html-report-filepath": "audit-reports/report.html",
   "registry": "https://registry.npmjs.org/"
