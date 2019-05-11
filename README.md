@@ -23,7 +23,7 @@ html-report-filepath: set a custom file name of HTML report, only applicable if 
 audit-fail-build: sets the exit code to 1 when true or 0 when false
 
 If no config file is passed then the following defaults will be used:
-  "severity": "high"
+  "severity": "critical"
   "package-manager": "npm"
   "registry": ""
   "report": false

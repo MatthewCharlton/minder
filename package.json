@@ -1,0 +1,40 @@
+{
+  "name": "auditor",
+  "version": "1.0.0",
+  "description": "Runs NPM or Yarn audit and can be configured to fail builds if the audit finds vulnerable packages",
+  "main": "dist/index.js",
+  "bin": "bin/auditor.js",
+  "scripts": {
+    "test": "jest --silent --config jest.config.json src/auditor.spec.js",
+    "build": "rollup -c rollup.config.js",
+    "auditor": "auditor"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MatthewCharlton/auditor.git"
+  },
+  "keywords": [
+    "CI",
+    "security",
+    "audit"
+  ],
+  "author": "MatthewCharlton",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MatthewCharlton/auditor/issues"
+  },
+  "homepage": "https://github.com/MatthewCharlton/auditor#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0",
+    "@babel/register": "^7.0.0",
+    "babel-jest": "^24.0.0",
+    "babel-preset-airbnb": "^3.0.0",
+    "jest": "^24.8.0",
+    "mock-fs": "^4.9.0",
+    "npm-audit-html": "^1.3.2",
+    "rollup": "^1.11.3",
+    "yarn-audit-html": "^1.0.2"
+  }
+}
