@@ -1,8 +1,7 @@
 /* eslint-disable no-console */
-import { readFileSync } from 'fs';
 import path from 'path';
 import { exit, cwd } from 'process';
-import { spawn, execSync } from 'child_process';
+import { spawn } from 'child_process';
 
 import { capitalize, formatText } from './utils';
 
@@ -30,29 +29,11 @@ class Auditor {
     this.isNPM = this.packageManager === 'npm';
   }
 
-  createLockFileIfNeeded() {
-    // npm audit requires a package-lock file, yarn can audit without one
-    if (this.isNPM) {
-      try {
-        readFileSync('./package-lock.json');
-      } catch (ignore) {
-        try {
-          console.log(
-            'No lock file found in current folder. Creating one now.'
-          );
-          execSync('npm install --package-lock-only');
-        } catch (err) {
-          console.log(err);
-        }
-      }
-    }
-  }
-
   handlePlugin(data) {
     let plugin;
     try {
       // eslint-disable-next-line global-require,import/no-unresolved
-      plugin = require('./auditor-plugin.js');
+      plugin = require(`${cwd()}/audit-ci-plugin.js`);
     } catch (err) {
       plugin = () => {};
     }
@@ -104,7 +85,7 @@ class Auditor {
         ? JSON.parse(data).metadata
         : JSON.parse(data[data.length - 1]).data;
 
-      this.handlePlugin(data);
+      this.handlePlugin(data, this.config);
 
       const { vulnerabilities } = metadata;
       const severityType = this.getSeverityType(vulnerabilities, this.severity);
@@ -129,6 +110,11 @@ class Auditor {
         exit(0);
       }
     } catch (e) {
+      if (this.isNPM && JSON.parse(auditResponse).error) {
+        console.log(`${JSON.parse(auditResponse).error.summary}\n`);
+        console.log(`${JSON.parse(auditResponse).error.detail}\n`);
+        exit(1);
+      }
       console.log(e);
       console.log('Error parsing JSON. Exiting');
       exit(1);
@@ -141,7 +127,7 @@ class Auditor {
     if (Object.keys(this.config).length < 1) {
       console.log('No config supplied, using defaults.');
       console.log(
-        'You can configure Auditor by creating an "auditor-config.[js,json]" file in your projects root folder\n'
+        'You can configure Auditor by creating an "audit-ci.config.[js,json]" file in your projects root folder\n'
       );
     } else {
       console.log('---- Config ----');
@@ -169,8 +155,6 @@ class Auditor {
         console.log('---------------\n');
       }
     }
-
-    this.createLockFileIfNeeded();
 
     console.log('--- Command ---');
     console.log(`${this.packageManager} ${auditArgs.join(' ')}`);
@@ -227,7 +211,7 @@ class Auditor {
 function handleGetConfig() {
   try {
     // eslint-disable-next-line global-require,import/no-unresolved
-    return require(`${cwd()}/auditor-config`);
+    return require(`${cwd()}/audit-ci.config`);
   } catch (ignore) {
     return {};
   }

@@ -1,9 +1,9 @@
 # Audit CI
 ### A JavaScript module to fail builds if an NPM or Yarn audit fails
 
-Usage: auditor
+Usage: audit-ci
 
-You can create a config file to commit with your project. Must be named "auditor-config.[js,json]".
+You can create a config file to commit with your project. Must be named "audit-ci.config.[js,json]".
 ```javascript
 {
   "severity": "critical",

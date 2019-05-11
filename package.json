@@ -7,7 +7,7 @@
   "scripts": {
     "test": "jest --silent --config jest.config.json src/audit-ci.spec.js",
     "build": "rollup -c rollup.config.js",
-    "audit-ci": "node dist"
+    "audit-ci": "node bin/audit-ci.js"
   },
   "repository": {
     "type": "git",
