@@ -5,7 +5,7 @@ import { spawn } from 'child_process';
 
 import { capitalize, formatText } from './utils';
 
-class Auditor {
+export class Auditor {
   constructor(config = {}) {
     this.config = config;
     this.packageManager =
