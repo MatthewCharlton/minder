@@ -1,9 +1,9 @@
-# Auditor
+# Audit CI
 ### A JavaScript module to fail builds if an NPM or Yarn audit fails
 
 Usage: auditor
 
-You can create a config file to commit with your project. Must be named "auditor-config".
+You can create a config file to commit with your project. Must be named "auditor-config.[js,json]".
 ```javascript
 {
   "severity": "critical",
@@ -14,19 +14,19 @@ You can create a config file to commit with your project. Must be named "auditor
 }
 ```
 
-Explaination of options:
-severity: configure what severity you would like to fail on
-package-manager: choose what pacakge manager audit endpoint to use
-registry: choose what registry the audit payload will be sent to
-report: choose to output a HTML report of the audit results
-html-report-filepath: set a custom file name of HTML report, only applicable if "report" is set to true
-audit-fail-build: sets the exit code to 1 when true or 0 when false
+**Explaination of options:** <br>
+severity: configure what severity you would like to fail on <br>
+package-manager: choose what pacakge manager audit endpoint to use <br>
+registry: choose what registry the audit payload will be sent to <br>
+report: choose to output a HTML report of the audit results <br>
+html-report-filepath: set a custom file name of HTML report, only applicable if "report" is set to true <br>
+audit-fail-build: sets the exit code to 1 when true or 0 when false <br>
 
-If no config file is passed then the following defaults will be used:
-  "severity": "critical"
-  "package-manager": "npm"
-  "registry": ""
-  "report": false
-  "html-report-filepath": ""
-  "audit-fail-build": false
+If no config file is passed then the following defaults will be used: <br>
+"severity": "critical" <br>
+"package-manager": "npm" <br>
+"registry": "" <br>
+"report": false <br>
+"html-report-filepath": "" <br>
+"audit-fail-build": false <br>
   
