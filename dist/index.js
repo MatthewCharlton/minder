@@ -34,7 +34,7 @@ class Auditor {
       config.severity && config.severity.toLowerCase()
     )
       ? config.severity.toLowerCase()
-      : 'high';
+      : 'critical';
     this.report = !!config.report;
     this.reportFilePath = (config['html-report-filepath'] || '').replace(
       /[^\w_/\\.]/g,
