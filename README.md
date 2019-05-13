@@ -1,7 +1,7 @@
 # Audit CI
 ### A JavaScript module to fail builds if an NPM or Yarn audit fails
 audit-ci is a wrapper for npm audit and yarn audit.<br>
-You can configure audit-ci to call either package manager and 
+You can configure audit-ci to call either package manager and set it to fails CI builds if the audit finds packages with security issues matching your specified severity level 
 
 **Usage**: audit-ci
 
