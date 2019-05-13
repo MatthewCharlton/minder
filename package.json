@@ -14,7 +14,7 @@
     "bin": "mkdir -p bin && cp src/bin.js bin/auditor-ci.js",
     "build": "npm run rollup && npm run bin",
     "auditor-ci": "node bin/auditor-ci.js",
-    "release": "npm run test && npm run build && npm publish"
+    "release": "npm run test && npm run auditor-ci && npm run build && npm publish"
   },
   "repository": {
     "type": "git",
