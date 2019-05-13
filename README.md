@@ -1,9 +1,12 @@
 # Audit CI
 ### A JavaScript module to fail builds if an NPM or Yarn audit fails
+audit-ci is a wrapper for npm audit and yarn audit.<br>
+You can configure audit-ci to call either package manager and 
 
-Usage: audit-ci
+**Usage**: audit-ci
 
-You can create a config file called "audit-ci.config.json" to commit with your project.
+You can create a config file called "audit-ci.config.json" to commit with your project. <br>
+Example: <br>
 ```javascript
 {
   "severity": "critical",

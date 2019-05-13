@@ -101,11 +101,10 @@ export class Auditor {
     } catch (e) {
       if (this.isNPM && JSON.parse(auditResponse).error) {
         console.log(
-          `${JSON.parse(auditResponse).error.summary}\n${
-            JSON.parse(auditResponse).error.detail
-          }`
+          `${JSON.parse(auditResponse).error.code}\n${
+            JSON.parse(auditResponse).error.summary
+          }\n${JSON.parse(auditResponse).error.detail}`
         );
-
         exit(1);
       }
       console.log(e);
