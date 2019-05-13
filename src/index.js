@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
 import path from 'path';
-import { exit, cwd } from 'process';
+import { exit } from 'process';
 import { spawn } from 'child_process';
 
-import { capitalize, formatText } from './utils';
+import { capitalize, formatText, handleGetConfig, handlePlugin } from './utils';
 
 export class Auditor {
   constructor(config = {}) {
@@ -29,41 +29,30 @@ export class Auditor {
     this.isNPM = this.packageManager === 'npm';
   }
 
-  handlePlugin(data) {
-    let plugin;
-    try {
-      // eslint-disable-next-line global-require,import/no-unresolved
-      plugin = require(`${cwd()}/audit-ci-plugin.js`);
-    } catch (err) {
-      plugin = () => {};
-    }
-    plugin(data);
-  }
-
   getSeverityType(vulnerabilities, severityLevel) {
     const { low, moderate, high, critical } = vulnerabilities;
     let severityType = '';
 
     if (severityLevel === 'critical' && critical > 0) {
-      severityType = severityLevel;
+      severityType = 'critical';
     }
 
     if (severityLevel === 'high' && (critical > 0 || high > 0)) {
-      severityType = severityLevel;
+      severityType = 'high';
     }
 
     if (
       severityLevel === 'moderate' &&
       (critical > 0 || high > 0 || moderate > 0)
     ) {
-      severityType = severityLevel;
+      severityType = 'moderate';
     }
 
     if (
       severityLevel === 'low' &&
       (critical > 0 || high > 0 || moderate > 0 || low > 0)
     ) {
-      severityType = severityLevel;
+      severityType = 'low';
     }
 
     return severityType;
@@ -85,7 +74,7 @@ export class Auditor {
         ? JSON.parse(data).metadata
         : JSON.parse(data[data.length - 1]).data;
 
-      this.handlePlugin(data, this.config);
+      handlePlugin(data, this.config);
 
       const { vulnerabilities } = metadata;
       const severityType = this.getSeverityType(vulnerabilities, this.severity);
@@ -111,8 +100,12 @@ export class Auditor {
       }
     } catch (e) {
       if (this.isNPM && JSON.parse(auditResponse).error) {
-        console.log(`${JSON.parse(auditResponse).error.summary}\n`);
-        console.log(`${JSON.parse(auditResponse).error.detail}\n`);
+        console.log(
+          `${JSON.parse(auditResponse).error.summary}\n${
+            JSON.parse(auditResponse).error.detail
+          }`
+        );
+
         exit(1);
       }
       console.log(e);
@@ -127,7 +120,7 @@ export class Auditor {
     if (Object.keys(this.config).length < 1) {
       console.log('No config supplied, using defaults.');
       console.log(
-        'You can configure Auditor by creating an "audit-ci.config.[js,json]" file in your projects root folder\n'
+        'You can configure "audit-ci" by creating an "audit-ci.config.json" file in your projects root folder\n'
       );
     } else {
       console.log('---- Config ----');
@@ -205,15 +198,6 @@ export class Auditor {
         this.handleResults(auditResponse);
       });
     }
-  }
-}
-
-function handleGetConfig() {
-  try {
-    // eslint-disable-next-line global-require,import/no-unresolved
-    return require(`${cwd()}/audit-ci.config`);
-  } catch (ignore) {
-    return {};
   }
 }
 

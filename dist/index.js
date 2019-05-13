@@ -1,10 +1,13 @@
 'use strict';
 
+Object.defineProperty(exports, '__esModule', { value: true });
+
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var path = _interopDefault(require('path'));
 var process = require('process');
 var child_process = require('child_process');
+var fs = require('fs');
 
 function capitalize(str) {
   return `${str.charAt(0).toUpperCase()}${str.slice(1)}`;
@@ -12,10 +15,30 @@ function capitalize(str) {
 
 function formatText(str) {
   return str
-    .replace(/[/\-_]/g, ' ')
+    .replace(/[/\\\-_+]/g, ' ')
     .split(' ')
     .map(word => capitalize(word))
     .join(' ');
+}
+
+function handleGetConfig() {
+  try {
+    return JSON.parse(fs.readFileSync(`${process.cwd()}/audit-ci.config.json`));
+  } catch (ignore) {
+    return {};
+  }
+}
+
+function handlePlugin(data, config) {
+  let plugin;
+  try {
+    // eslint-disable-next-line global-require,import/no-unresolved
+    plugin = require(`${process.cwd()}/audit-ci-plugin.js`);
+  } catch (err) {
+    plugin = () => err;
+  }
+
+  return plugin(data, config);
 }
 
 /* eslint-disable no-console */
@@ -44,41 +67,30 @@ class Auditor {
     this.isNPM = this.packageManager === 'npm';
   }
 
-  handlePlugin(data) {
-    let plugin;
-    try {
-      // eslint-disable-next-line global-require,import/no-unresolved
-      plugin = require(`${process.cwd()}/audit-ci-plugin.js`);
-    } catch (err) {
-      plugin = () => {};
-    }
-    plugin(data);
-  }
-
   getSeverityType(vulnerabilities, severityLevel) {
     const { low, moderate, high, critical } = vulnerabilities;
     let severityType = '';
 
     if (severityLevel === 'critical' && critical > 0) {
-      severityType = severityLevel;
+      severityType = 'critical';
     }
 
     if (severityLevel === 'high' && (critical > 0 || high > 0)) {
-      severityType = severityLevel;
+      severityType = 'high';
     }
 
     if (
       severityLevel === 'moderate' &&
       (critical > 0 || high > 0 || moderate > 0)
     ) {
-      severityType = severityLevel;
+      severityType = 'moderate';
     }
 
     if (
       severityLevel === 'low' &&
       (critical > 0 || high > 0 || moderate > 0 || low > 0)
     ) {
-      severityType = severityLevel;
+      severityType = 'low';
     }
 
     return severityType;
@@ -100,7 +112,7 @@ class Auditor {
         ? JSON.parse(data).metadata
         : JSON.parse(data[data.length - 1]).data;
 
-      this.handlePlugin(data, this.config);
+      handlePlugin(data, this.config);
 
       const { vulnerabilities } = metadata;
       const severityType = this.getSeverityType(vulnerabilities, this.severity);
@@ -126,8 +138,12 @@ class Auditor {
       }
     } catch (e) {
       if (this.isNPM && JSON.parse(auditResponse).error) {
-        console.log(`${JSON.parse(auditResponse).error.summary}\n`);
-        console.log(`${JSON.parse(auditResponse).error.detail}\n`);
+        console.log(
+          `${JSON.parse(auditResponse).error.summary}\n${
+            JSON.parse(auditResponse).error.detail
+          }`
+        );
+
         process.exit(1);
       }
       console.log(e);
@@ -142,7 +158,7 @@ class Auditor {
     if (Object.keys(this.config).length < 1) {
       console.log('No config supplied, using defaults.');
       console.log(
-        'You can configure Auditor by creating an "audit-ci.config.[js,json]" file in your projects root folder\n'
+        'You can configure "audit-ci" by creating an "audit-ci.config.json" file in your projects root folder\n'
       );
     } else {
       console.log('---- Config ----');
@@ -223,17 +239,9 @@ class Auditor {
   }
 }
 
-function handleGetConfig() {
-  try {
-    // eslint-disable-next-line global-require,import/no-unresolved
-    return require(`${process.cwd()}/audit-ci.config`);
-  } catch (ignore) {
-    return {};
-  }
-}
-
 const auditor = new Auditor(handleGetConfig());
 
 var index = auditor.runAudit();
 
-module.exports = index;
+exports.Auditor = Auditor;
+exports.default = index;

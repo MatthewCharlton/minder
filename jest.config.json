@@ -4,5 +4,11 @@
     "^.+\\.js$": "babel-jest"
   },
   "verbose": true,
-  "moduleFileExtensions": ["js", "json", "jsx"]
+  "moduleFileExtensions": ["js", "json", "jsx"],
+  "collectCoverage": true,
+  "collectCoverageFrom": [
+    "**/src/*.{js,jsx}",
+    "!**/node_modules/**",
+    "!**/vendor/**"
+  ]
 }

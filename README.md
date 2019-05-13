@@ -3,7 +3,7 @@
 
 Usage: audit-ci
 
-You can create a config file to commit with your project. Must be named "audit-ci.config.[js,json]".
+You can create a config file called "audit-ci.config.json" to commit with your project.
 ```javascript
 {
   "severity": "critical",
@@ -29,4 +29,12 @@ If no config file is passed then the following defaults will be used: <br>
 "report": false <br>
 "html-report-filepath": "" <br>
 "audit-fail-build": false <br>
+
+**Add plugin** <br>
+audit-ci-plugin.js <br>
+```javascript
+module.exports = function auditCIPlugin(data) {
+  console.log(data);
+}
+```
   
