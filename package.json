@@ -10,7 +10,9 @@
   ],
   "scripts": {
     "test": "jest --silent --config jest.config.json",
-    "build": "rollup -c rollup.config.js",
+    "rollup": "rollup -c rollup.config.js",
+    "bin": "mkdir -p bin && cp src/bin.js bin/auditor-ci.js",
+    "build": "npm run rollup && npm run bin",
     "auditor-ci": "node bin/auditor-ci.js",
     "release": "npm run test && npm run build && npm publish"
   },
