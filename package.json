@@ -4,10 +4,15 @@
   "description": "Runs NPM or Yarn audit and can be configured to fail builds if the audit finds vulnerable packages",
   "main": "dist/index.js",
   "bin": "bin/auditor-ci.js",
+  "files": [
+    "/dist",
+    "/bin"
+  ],
   "scripts": {
     "test": "jest --silent --config jest.config.json",
     "build": "rollup -c rollup.config.js",
-    "auditor-ci": "node bin/auditor-ci.js"
+    "auditor-ci": "node bin/auditor-ci.js",
+    "release": "npm run test && npm run build && npm publish"
   },
   "repository": {
     "type": "git",
