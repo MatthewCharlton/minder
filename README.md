@@ -33,8 +33,8 @@ If no config file is passed then the following defaults will be used: <br>
 **Add plugin** <br>
 audit-ci-plugin.js <br>
 ```javascript
-module.exports = function auditCIPlugin(data) {
-  console.log(data);
+module.exports = function auditCIPlugin(data, config) {
+  console.log(`Do something with: ${data} and ${config}`);
 }
 ```
   
