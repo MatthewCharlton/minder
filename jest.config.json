@@ -1,5 +1,5 @@
 {
-  "name": "audit-ci",
+  "name": "auditor-ci",
   "transform": {
     "^.+\\.js$": "babel-jest"
   },

@@ -21,11 +21,11 @@ describe('Utils', () => {
   });
 
   describe('handleGetConfig', () => {
-    it('uses default config when no audit-ci.config.json present', () => {
+    it('uses default config when no auditor-ci.config.json present', () => {
       readFileSync.mockReturnValue({});
       expect(handleGetConfig()).toStrictEqual({});
     });
-    it('uses config from audit-ci.config.json file', async () => {
+    it('uses config from auditor-ci.config.json file', async () => {
       const config =
         '{"severity":"critical","package-manager":"npm","report":true,"audit-fail-build":true,"html-report-filepath":"auditor-report.html"}';
 
