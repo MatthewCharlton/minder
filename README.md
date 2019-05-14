@@ -1,6 +1,6 @@
-# Audit CI
+# Minder
 
-### A JavaScript module to fail builds if an NPM or Yarn audit fails
+### Track third-party packages with security issues before they make it into production
 
 _minder_ is a wrapper for npm audit and yarn audit.<br>
 You can configure _minder_ to call either npm or yarn audit and set it to fail CI builds if the audit finds packages with security issues matching your specified severity level. <br>
