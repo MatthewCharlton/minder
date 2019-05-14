@@ -41,7 +41,7 @@ If no config file is passed then the following defaults will be used: <br>
 minder-plugin.js <br>
 
 ```javascript
-module.exports = function auditCIPlugin(data, config) {
+module.exports = function minderPlugin(data, config) {
   console.log(`Do something with: ${data} and ${config}`);
 };
 ```
