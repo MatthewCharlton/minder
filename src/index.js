@@ -119,7 +119,7 @@ export class Auditor {
     if (Object.keys(this.config).length < 1) {
       console.log('No config supplied, using defaults.');
       console.log(
-        'You can configure "auditor-ci" by creating an "auditor-ci.config.json" file in your projects root folder\n'
+        'You can configure "minder" by creating an "minder.config.json" file in your projects root folder\n'
       );
     } else {
       console.log('---- Config ----');

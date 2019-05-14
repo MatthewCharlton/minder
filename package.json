@@ -1,24 +1,22 @@
 {
-  "name": "auditor-ci",
+  "name": "minder",
   "version": "1.0.0",
   "description": "Runs NPM or Yarn audit and can be configured to fail builds if the audit finds vulnerable packages",
   "main": "dist/index.js",
-  "bin": "bin/auditor-ci.js",
+  "bin": "bin/minder.js",
   "files": [
     "/dist",
     "/bin"
   ],
   "scripts": {
     "test": "jest --silent --config jest.config.json",
-    "rollup": "rollup -c rollup.config.js",
-    "bin": "mkdir -p bin && cp src/bin.js bin/auditor-ci.js",
-    "build": "npm run rollup && npm run bin",
-    "auditor-ci": "node bin/auditor-ci.js",
-    "release": "npm run test && npm run auditor-ci && npm run build && npm publish"
+    "build": "rollup -c rollup.config.js",
+    "minder": "node bin/minder.js",
+    "release": "npm run test && npm run minder && npm run build && npm publish"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MatthewCharlton/auditor-ci.git"
+    "url": "git+https://github.com/MatthewCharlton/minder.git"
   },
   "keywords": [
     "CI",
@@ -28,9 +26,9 @@
   "author": "MatthewCharlton",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/MatthewCharlton/auditor-ci/issues"
+    "url": "https://github.com/MatthewCharlton/minder/issues"
   },
-  "homepage": "https://github.com/MatthewCharlton/auditor-ci#readme",
+  "homepage": "https://github.com/MatthewCharlton/minder#readme",
   "dependencies": {
     "npm-audit-html": "^1.3.2",
     "yarn-audit-html": "^1.0.2"

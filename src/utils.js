@@ -15,7 +15,7 @@ export function formatText(str) {
 
 export function handleGetConfig() {
   try {
-    return JSON.parse(readFileSync(`${cwd()}/auditor-ci.config.json`));
+    return JSON.parse(readFileSync(`${cwd()}/minder.config.json`));
   } catch (ignore) {
     return {};
   }
@@ -25,7 +25,7 @@ export function handlePlugin(data, config) {
   let plugin;
   try {
     // eslint-disable-next-line global-require,import/no-unresolved
-    plugin = require(`${cwd()}/auditor-ci-plugin.js`);
+    plugin = require(`${cwd()}/minder-plugin.js`);
   } catch (err) {
     plugin = () => err;
   }

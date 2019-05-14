@@ -2,13 +2,13 @@
 
 ### A JavaScript module to fail builds if an NPM or Yarn audit fails
 
-_auditor-ci_ is a wrapper for npm audit and yarn audit.<br>
-You can configure _auditor-ci_ to call either npm or yarn audit and set it to fail CI builds if the audit finds packages with security issues matching your specified severity level. <br>
+_minder_ is a wrapper for npm audit and yarn audit.<br>
+You can configure _minder_ to call either npm or yarn audit and set it to fail CI builds if the audit finds packages with security issues matching your specified severity level. <br>
 You can also output the results to an HTML report.
 
-**Usage**: auditor-ci
+**Usage**: minder
 
-You can create a config file called "auditor-ci.config.json" to commit with your project. <br>
+You can create a config file called "minder.config.json" to commit with your project. <br>
 Example: <br>
 
 ```javascript
@@ -38,7 +38,7 @@ If no config file is passed then the following defaults will be used: <br>
 "audit-fail-build": false <br>
 
 **Add plugin** <br>
-auditor-ci-plugin.js <br>
+minder-plugin.js <br>
 
 ```javascript
 module.exports = function auditCIPlugin(data, config) {
