@@ -105,7 +105,7 @@ export const errorNPMJSON = `{
   "error": {
     "code": "ENOTFOUND",
     "summary": "request to https://registry.npmjs.org/-/npm/v1/security/audits failed, reason: getaddrinfo ENOTFOUND registry.npmjs.org registry.npmjs.org:443",
-    "detail": "This is a problem related to network connectivity.\nIn most cases you are behind a proxy or have bad network settings.\n\nIf you are behind a proxy, please make sure that the\n'proxy' config is set properly.  See: 'npm help config'"
+    "detail": "This is a problem related to network connectivity.\\nIn most cases you are behind a proxy or have bad network settings.\\n\\nIf you are behind a proxy, please make sure that the\\n'proxy' config is set properly.  See: 'npm help config'"
   }
-}
-`;
+}`;
+

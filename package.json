@@ -1,7 +1,7 @@
 {
   "name": "minder",
   "version": "1.0.0",
-  "description": "Runs NPM or Yarn audit and can be configured to fail builds if the audit finds vulnerable packages",
+  "description": "Runs NPM or Yarn audit and can be configured to fail tasks if the audit finds vulnerable packages",
   "main": "dist/index.js",
   "bin": "bin/minder.js",
   "files": [
@@ -41,5 +41,8 @@
     "babel-preset-airbnb": "^3.0.0",
     "jest": "^24.8.0",
     "rollup": "^1.11.3"
+  },
+  "engines": {
+    "npm": ">= 6.0.0"
   }
 }

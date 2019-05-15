@@ -23,23 +23,23 @@ jest.mock('child_process', () => ({
   })
 }));
 
-let auditCI;
+let minder;
 
 describe('Auditor Class', () => {
   beforeEach(() => {
     const { Auditor } = require('../src');
-    auditCI = new Auditor();
+    minder = new Auditor();
   });
   describe('config', () => {
     it('uses default settings when no config is passed', () => {
-      expect(auditCI.config).toEqual({});
-      expect(auditCI.packageManager).toEqual('npm');
-      expect(auditCI.severity).toEqual('critical');
-      expect(auditCI.auditFailBuild).toEqual(0);
-      expect(auditCI.report).toEqual(false);
-      expect(auditCI.registry).toEqual('');
-      expect(auditCI.reportFilePath).toEqual('');
-      expect(auditCI.isNPM).toEqual(true);
+      expect(minder.config).toEqual({});
+      expect(minder.packageManager).toEqual('npm');
+      expect(minder.severity).toEqual('critical');
+      expect(minder.auditFailBuild).toEqual(0);
+      expect(minder.report).toEqual(false);
+      expect(minder.registry).toEqual('');
+      expect(minder.reportFilePath).toEqual('');
+      expect(minder.isNPM).toEqual(true);
     });
     it('uses custom settings when config is passed', () => {
       const config = {
@@ -51,21 +51,21 @@ describe('Auditor Class', () => {
         registry: 'http://registry.yarnpkg.com/'
       };
       const { Auditor } = require('../src');
-      auditCI = new Auditor(config);
-      expect(auditCI.config).toEqual(config);
-      expect(auditCI.packageManager).toEqual('yarn');
-      expect(auditCI.registry).toEqual('http://registry.yarnpkg.com/');
-      expect(auditCI.severity).toEqual('high');
-      expect(auditCI.auditFailBuild).toEqual(1);
-      expect(auditCI.report).toEqual(true);
-      expect(auditCI.reportFilePath).toEqual('auditor-report.html');
-      expect(auditCI.isNPM).toEqual(false);
+      minder = new Auditor(config);
+      expect(minder.config).toEqual(config);
+      expect(minder.packageManager).toEqual('yarn');
+      expect(minder.registry).toEqual('http://registry.yarnpkg.com/');
+      expect(minder.severity).toEqual('high');
+      expect(minder.auditFailBuild).toEqual(1);
+      expect(minder.report).toEqual(true);
+      expect(minder.reportFilePath).toEqual('auditor-report.html');
+      expect(minder.isNPM).toEqual(false);
     });
   });
   describe('runAudit', () => {
     it('uses default settings when no config is passed', () => {
-      const auditFnSpy = jest.spyOn(auditCI, 'runAudit');
-      auditCI.runAudit();
+      const auditFnSpy = jest.spyOn(minder, 'runAudit');
+      minder.runAudit();
       expect(auditFnSpy).toBeCalledTimes(1);
       expect(spawn).toBeCalledWith('npm', ['audit', '--json']);
     });
@@ -77,9 +77,9 @@ describe('Auditor Class', () => {
         registry: 'http://registry.yarnpkg.com/'
       };
       const { Auditor } = require('../src');
-      const auditCI = new Auditor(config);
-      const auditFnSpy = jest.spyOn(auditCI, 'runAudit');
-      auditCI.runAudit();
+      const minder = new Auditor(config);
+      const auditFnSpy = jest.spyOn(minder, 'runAudit');
+      minder.runAudit();
       expect(auditFnSpy).toBeCalledTimes(1);
       expect(spawn).toBeCalledWith('npm', [
         'audit',
@@ -90,7 +90,7 @@ describe('Auditor Class', () => {
   });
   describe('getSeverityType', () => {
     it('returns severity from vulnerabilities', () => {
-      auditCI.severity = 'high';
+      minder.severity = 'high';
       const vulnerabilities = {
         info: 0,
         low: 9,
@@ -98,11 +98,11 @@ describe('Auditor Class', () => {
         high: 7,
         critical: 2
       };
-      const severity = auditCI.getSeverityType(
+      const severity = minder.getSeverityType(
         vulnerabilities,
-        auditCI.severity
+        minder.severity
       );
-      expect(severity).toBe(auditCI.severity);
+      expect(severity).toBe(minder.severity);
     });
     it('returns severity from vulnerabilities', () => {
       const vulnerabilities = {
@@ -112,23 +112,23 @@ describe('Auditor Class', () => {
         high: 0,
         critical: 2
       };
-      auditCI.severity = 'high';
-      const severity = auditCI.getSeverityType(
+      minder.severity = 'high';
+      const severity = minder.getSeverityType(
         vulnerabilities,
-        auditCI.severity
+        minder.severity
       );
-      expect(severity).toBe(auditCI.severity);
+      expect(severity).toBe(minder.severity);
     });
   });
   describe('handleResults', () => {
     describe('NPM', () => {
       it('if vulnerabilities does not match severity and are lower than severity then exit(0)', () => {
-        auditCI.packageManager = 'npm';
-        auditCI.isNPM = true;
-        auditCI.severity = 'low';
-        auditCI.auditFailBuild = 1;
-        const getSeverityTypeSpy = jest.spyOn(auditCI, 'getSeverityType');
-        auditCI.handleResults(noNPMAdvisoriesJSON);
+        minder.packageManager = 'npm';
+        minder.isNPM = true;
+        minder.severity = 'low';
+        minder.auditFailBuild = 1;
+        const getSeverityTypeSpy = jest.spyOn(minder, 'getSeverityType');
+        minder.handleResults(noNPMAdvisoriesJSON);
         expect(getSeverityTypeSpy).toBeCalledWith(
           {
             info: 0,
@@ -142,10 +142,10 @@ describe('Auditor Class', () => {
         expect(exit).toBeCalledWith(0);
       });
       it('if vulnerabilities has matching severity and auditFailBuild = true then exit(1)', () => {
-        auditCI.severity = 'high';
-        auditCI.auditFailBuild = 1;
-        const getSeverityTypeSpy = jest.spyOn(auditCI, 'getSeverityType');
-        auditCI.handleResults(findingNPMAdvisoryJSON);
+        minder.severity = 'high';
+        minder.auditFailBuild = 1;
+        const getSeverityTypeSpy = jest.spyOn(minder, 'getSeverityType');
+        minder.handleResults(findingNPMAdvisoryJSON);
         expect(getSeverityTypeSpy).toBeCalledWith(
           {
             info: 0,
@@ -159,10 +159,10 @@ describe('Auditor Class', () => {
         expect(exit).toBeCalledWith(1);
       });
       it('if vulnerabilities does not match severity but are higher than severity then exit(1)', () => {
-        auditCI.severity = 'moderate';
-        auditCI.auditFailBuild = 1;
-        const getSeverityTypeSpy = jest.spyOn(auditCI, 'getSeverityType');
-        auditCI.handleResults(`{
+        minder.severity = 'moderate';
+        minder.auditFailBuild = 1;
+        const getSeverityTypeSpy = jest.spyOn(minder, 'getSeverityType');
+        minder.handleResults(`{
             "metadata":{
               "vulnerabilities": {
                 "info": 0,
@@ -186,10 +186,10 @@ describe('Auditor Class', () => {
         expect(exit).toBeCalledWith(1);
       });
       it('if vulnerabilities does not match severity and are lower than severity then exit(0)', () => {
-        auditCI.severity = 'moderate';
-        auditCI.auditFailBuild = 1;
-        const getSeverityTypeSpy = jest.spyOn(auditCI, 'getSeverityType');
-        auditCI.handleResults(`{
+        minder.severity = 'moderate';
+        minder.auditFailBuild = 1;
+        const getSeverityTypeSpy = jest.spyOn(minder, 'getSeverityType');
+        minder.handleResults(`{
         "metadata":{
           "vulnerabilities": {
             "info": 0,
@@ -212,25 +212,25 @@ describe('Auditor Class', () => {
         );
         expect(exit).toBeCalledWith(0);
       });
-      it.skip('if audit call fails', () => {
+      it('if audit call fails', () => {
         const consoleLogSpy = jest.spyOn(console, 'log');
-        auditCI.handleResults(errorNPMJSON);
+        minder.handleResults(errorNPMJSON);
         expect(consoleLogSpy).toBeCalledWith(
-          `${JSON.parse(errorNPMJSON).error.summary}\n${
-            JSON.parse(errorNPMJSON).error.detail
-          }`
+          `${JSON.parse(errorNPMJSON).error.code}\n${
+            JSON.parse(errorNPMJSON).error.summary
+          }\n${JSON.parse(errorNPMJSON).error.detail}`
         );
         expect(exit).toBeCalledWith(1);
       });
     });
     describe('Yarn', () => {
       it('if vulnerabilities does not match severity and are lower than severity then exit(0)', () => {
-        auditCI.packageManager = 'yarn';
-        auditCI.isNPM = false;
-        auditCI.severity = 'low';
-        auditCI.auditFailBuild = 1;
-        const getSeverityTypeSpy = jest.spyOn(auditCI, 'getSeverityType');
-        auditCI.handleResults(noYarnAdvisoriesJSON);
+        minder.packageManager = 'yarn';
+        minder.isNPM = false;
+        minder.severity = 'low';
+        minder.auditFailBuild = 1;
+        const getSeverityTypeSpy = jest.spyOn(minder, 'getSeverityType');
+        minder.handleResults(noYarnAdvisoriesJSON);
         expect(getSeverityTypeSpy).toBeCalledWith(
           {
             info: 0,
