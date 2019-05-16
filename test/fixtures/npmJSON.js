@@ -19,6 +19,21 @@ export const noNPMAdvisoriesJSON = `{
 }`;
 
 export const findingNPMAdvisoryJSON = `{
+  "actions": [
+    {
+      "action": "review",
+      "module": "minimatch",
+      "resolves": [
+        {
+          "id": 118,
+          "path": "gulp>vinyl-fs>glob-stream>glob>minimatch",
+          "dev": true,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    }
+  ],
   "advisories": {
     "118": {
       "findings": [

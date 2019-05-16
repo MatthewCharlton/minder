@@ -9,7 +9,7 @@
     "/bin"
   ],
   "scripts": {
-    "test": "jest --config jest.config.json",
+    "test": "jest --silent --config jest.config.json",
     "build": "rollup -c rollup.config.js",
     "minder": "node bin/minder.js",
     "release": "npm run test && npm run build && npm run minder && npm publish"

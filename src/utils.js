@@ -71,17 +71,21 @@ export function filterOutWhiteListedAdvisories(
         advisories: filteredAdvisories
       };
     case 'yarn':
-      const resArray = response.split(/}\n/).filter(line => line !== '');
-      return (
-        resArray
-          // .map(item => console.log('item',item))
-          .map(item => JSON.parse(item.replace('\n', '')))
-          .filter(item => JSON.parse(item).type === 'auditAdvisory')
-          .filter(
-            advisory =>
-              !whitelistedAdvisories.includes(advisory.data.resolution.id)
+      const resArray = response.replace(/\}\n\{/g, '}}--{{').split(/}--{/g);
+      return resArray
+        .map(item =>
+          JSON.parse(
+            item
+              .replace(/[\n+\`+]/g, '')
+              .replace(/'/g, "'")
+              .replace(/(")(\d+)(")/, '$2')
           )
-      );
+        )
+        .filter(item => item.type === 'auditAdvisory')
+        .filter(
+          advisory =>
+            !whitelistedAdvisories.includes(String(advisory.data.advisory.id))
+        );
     default:
       return {};
   }
