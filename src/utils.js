@@ -35,13 +35,11 @@ export function handlePlugin(data, config) {
 
 export function returnVulnDataFromResponse(packageManager, response) {
   switch (packageManager) {
-    case 'npm':
-      return JSON.parse(response).metadata.vulnerabilities;
     case 'yarn':
       const resArray = response.split(/\n/).filter(line => line !== '');
       return JSON.parse(resArray[resArray.length - 1]).data.vulnerabilities;
     default:
-      return {};
+      return JSON.parse(response).metadata.vulnerabilities;
   }
 }
 
@@ -51,7 +49,23 @@ export function filterOutWhiteListedAdvisories(
   whitelistedAdvisories
 ) {
   switch (packageManager) {
-    case 'npm':
+    case 'yarn':
+      const resArray = response.replace(/\}\n\{/g, '}}--{{').split(/}--{/g);
+      return resArray
+        .map(item =>
+          JSON.parse(
+            item
+              .replace(/[\n+\`+]/g, '')
+              .replace(/'/g, "'")
+              .replace(/(")(\d+)(")/, '$2')
+          )
+        )
+        .filter(item => item.type === 'auditAdvisory')
+        .filter(
+          advisory =>
+            !whitelistedAdvisories.includes(String(advisory.data.advisory.id))
+        );
+    default:
       const json = JSON.parse(response);
       const { advisories } = json;
       const filteredAdvisories = Object.keys(advisories).reduce(
@@ -70,23 +84,5 @@ export function filterOutWhiteListedAdvisories(
         ...json,
         advisories: filteredAdvisories
       };
-    case 'yarn':
-      const resArray = response.replace(/\}\n\{/g, '}}--{{').split(/}--{/g);
-      return resArray
-        .map(item =>
-          JSON.parse(
-            item
-              .replace(/[\n+\`+]/g, '')
-              .replace(/'/g, "'")
-              .replace(/(")(\d+)(")/, '$2')
-          )
-        )
-        .filter(item => item.type === 'auditAdvisory')
-        .filter(
-          advisory =>
-            !whitelistedAdvisories.includes(String(advisory.data.advisory.id))
-        );
-    default:
-      return {};
   }
 }
