@@ -1,4 +1,6 @@
 {
   "severity": "high",
+  "report": true,
+  "html-report-filepath": "minder-report.html",
   "audit-fail-build": true
 }

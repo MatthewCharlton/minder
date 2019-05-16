@@ -1,6 +1,6 @@
 {
   "name": "minder",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Runs NPM or Yarn audit and can be configured to fail tasks if the audit finds vulnerable packages",
   "main": "dist/index.js",
   "bin": "bin/minder.js",
@@ -31,6 +31,7 @@
   "homepage": "https://github.com/MatthewCharlton/minder#readme",
   "dependencies": {
     "npm-audit-html": "^1.3.2",
+    "npm-run": "^5.0.1",
     "yarn-audit-html": "^1.0.2"
   },
   "devDependencies": {

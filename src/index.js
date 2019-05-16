@@ -1,9 +1,15 @@
 /* eslint-disable no-console */
-import path from 'path';
 import { exit } from 'process';
 import { spawn } from 'child_process';
+import { spawn as npmRunSpwan } from 'npm-run';
 
-import { capitalize, formatText, handleGetConfig, handlePlugin } from './utils';
+import {
+  capitalize,
+  formatText,
+  handleGetConfig,
+  handlePlugin,
+  returnVulnDataFromResponse
+} from './utils';
 
 export class Auditor {
   constructor(config = {}) {
@@ -66,17 +72,12 @@ export class Auditor {
 
   handleResults(auditResponse) {
     try {
-      const data = this.isNPM
-        ? auditResponse
-        : auditResponse.split(/\n/).filter(line => line !== '');
+      handlePlugin(auditResponse, this.config);
 
-      const metadata = this.isNPM
-        ? JSON.parse(data).metadata
-        : JSON.parse(data[data.length - 1]).data;
-
-      handlePlugin(data, this.config);
-
-      const { vulnerabilities } = metadata;
+      const vulnerabilities = returnVulnDataFromResponse(
+        this.packageManager,
+        auditResponse
+      );
       const severityType = this.getSeverityType(vulnerabilities, this.severity);
 
       console.log('---- Summary ----');
@@ -168,14 +169,11 @@ export class Auditor {
 
     if (this.report) {
       const reporterArgs = [];
-      const nodeModulesFolder = path.join(__dirname, '../', 'node_modules');
-      this.isNPM
-        ? reporterArgs.push(`${nodeModulesFolder}/npm-audit-html`)
-        : reporterArgs.push(`${nodeModulesFolder}/yarn-audit-html`);
       if (this.reportFilePath) {
         reporterArgs.push('--output', this.reportFilePath);
       }
-      const reporter = spawn('node', reporterArgs);
+      const reporterCmd = this.isNPM ? 'npm-audit-html' : 'yarn-audit-html';
+      const reporter = npmRunSpwan(reporterCmd, reporterArgs);
       let reporterErrorBuffer = '';
       reporter.stderr.on('data', data => {
         reporterErrorBuffer += data;
