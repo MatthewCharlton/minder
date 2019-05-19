@@ -47,19 +47,25 @@ describe('Utils', () => {
   describe('returnVulnDataFromResponse', () => {
     it('return vuln data from NPM', () => {
       expect(
-        returnVulnDataFromResponse('npm', findingNPMAdvisoryJSON)
+        returnVulnDataFromResponse(
+          'npm',
+          filterOutWhiteListedAdvisories('npm', findingNPMAdvisoryJSON, [])
+        )
       ).toStrictEqual({
         info: 0,
-        low: 9,
-        moderate: 1,
-        high: 7,
-        critical: 2
+        low: 0,
+        moderate: 0,
+        high: 1,
+        critical: 0
       });
     });
     it('return vuln data from Yarn', () => {
       expect(
-        returnVulnDataFromResponse('yarn', findingYarnAdvisoriesJSON)
-      ).toStrictEqual({ info: 0, low: 4, moderate: 3, high: 2, critical: 0 });
+        returnVulnDataFromResponse(
+          'yarn',
+          filterOutWhiteListedAdvisories('yarn', findingYarnAdvisoriesJSON, [])
+        )
+      ).toStrictEqual({ info: 0, low: 2, moderate: 1, high: 2, critical: 0 });
     });
   });
 
@@ -78,42 +84,45 @@ describe('Utils', () => {
       ).toStrictEqual(JSON.parse(findingNPMAdvisoryJSON));
     });
     it('return advisories without whitelisted ids from Yarn', () => {
+      const whitelistedAdvisories = ['803'];
       expect(
-        filterOutWhiteListedAdvisories('yarn', findingYarnAdvisoriesJSON, [
-          '803'
-        ])
+        filterOutWhiteListedAdvisories(
+          'yarn',
+          findingYarnAdvisoriesJSON,
+          whitelistedAdvisories
+        )
       ).toStrictEqual(
         findingYarnAdvisoriesJSON
-          .replace(/\}\n\{/g, '}}--{{')
-          .split(/}--{/g)
-          .map(item =>
-            JSON.parse(
-              item
-                .replace(/[\n+\`+]/g, '')
-                .replace(/'/g, "'")
-                .replace(/(")(\d+)(")/, '$2')
-            )
+          .split(/\n/)
+          .filter(line => line !== '')
+          .map(item => item.replace(/((")(\d+)("):)/, '$3:'))
+          .map(JSON.parse)
+          .filter(
+            item =>
+              item.type === 'auditAdvisory' &&
+              !whitelistedAdvisories.includes(String(item.data.advisory.id))
           )
-          .filter(item => item.type === 'auditAdvisory')
-          .filter((_, i) => i !== 0)
       );
     });
     it('return all advisories if no whitelisted ids present from Yarn', () => {
+      const whitelistedAdvisories = [];
       expect(
-        filterOutWhiteListedAdvisories('yarn', findingYarnAdvisoriesJSON, [])
+        filterOutWhiteListedAdvisories(
+          'yarn',
+          findingYarnAdvisoriesJSON,
+          whitelistedAdvisories
+        )
       ).toStrictEqual(
         findingYarnAdvisoriesJSON
-          .replace(/\}\n\{/g, '}}--{{')
-          .split(/}--{/g)
-          .map(item =>
-            JSON.parse(
-              item
-                .replace(/[\n+\`+]/g, '')
-                .replace(/'/g, "'")
-                .replace(/(")(\d+)(")/, '$2')
-            )
+          .split(/\n/)
+          .filter(line => line !== '')
+          .map(item => item.replace(/((")(\d+)("):)/, '$3:'))
+          .map(JSON.parse)
+          .filter(
+            item =>
+              item.type === 'auditAdvisory' &&
+              !whitelistedAdvisories.includes(String(item.data.advisory.id))
           )
-          .filter(item => item.type === 'auditAdvisory')
       );
     });
   });

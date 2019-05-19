@@ -6,11 +6,7 @@ import {
   findingNPMAdvisoryJSON,
   errorNPMJSON
 } from './fixtures/npmJSON';
-import {
-  testYarnJSON,
-  noYarnAdvisoriesJSON,
-  findingYarnAdvisoryJSON
-} from './fixtures/yarnJSON';
+import { noYarnAdvisoriesJSON } from './fixtures/yarnJSON';
 
 jest.mock('process', () => ({
   exit: jest.fn()
@@ -48,7 +44,8 @@ describe('Auditor Class', () => {
         report: true,
         'audit-fail-build': true,
         'html-report-filepath': 'auditor-report.html',
-        registry: 'http://registry.yarnpkg.com/'
+        registry: 'http://registry.yarnpkg.com/',
+        'whitelisted-advisories': ['803']
       };
       const { Auditor } = require('../src');
       minder = new Auditor(config);
@@ -60,6 +57,7 @@ describe('Auditor Class', () => {
       expect(minder.report).toEqual(true);
       expect(minder.reportFilePath).toEqual('auditor-report.html');
       expect(minder.isNPM).toEqual(false);
+      expect(minder.whitelistedAdvisories).toEqual(['803']);
     });
   });
   describe('runAudit', () => {
@@ -98,10 +96,7 @@ describe('Auditor Class', () => {
         high: 7,
         critical: 2
       };
-      const severity = minder.getSeverityType(
-        vulnerabilities,
-        minder.severity
-      );
+      const severity = minder.getSeverityType(vulnerabilities, minder.severity);
       expect(severity).toBe(minder.severity);
     });
     it('returns severity from vulnerabilities', () => {
@@ -113,10 +108,7 @@ describe('Auditor Class', () => {
         critical: 2
       };
       minder.severity = 'high';
-      const severity = minder.getSeverityType(
-        vulnerabilities,
-        minder.severity
-      );
+      const severity = minder.getSeverityType(vulnerabilities, minder.severity);
       expect(severity).toBe(minder.severity);
     });
   });
@@ -149,10 +141,10 @@ describe('Auditor Class', () => {
         expect(getSeverityTypeSpy).toBeCalledWith(
           {
             info: 0,
-            low: 9,
-            moderate: 1,
-            high: 7,
-            critical: 2
+            low: 0,
+            moderate: 0,
+            high: 1,
+            critical: 0
           },
           'high'
         );
@@ -163,52 +155,56 @@ describe('Auditor Class', () => {
         minder.auditFailBuild = 1;
         const getSeverityTypeSpy = jest.spyOn(minder, 'getSeverityType');
         minder.handleResults(`{
-            "metadata":{
-              "vulnerabilities": {
-                "info": 0,
-                "low": 9,
-                "moderate": 0,
-                "high": 0,
-                "critical": 1
-              }
+          "advisories": {
+            "112":{
+              "severity": "high"
+            },
+            "547":{
+              "severity": "moderate"
+            },
+            "976":{
+              "severity": "high"
             }
+          }
         }`);
         expect(getSeverityTypeSpy).toBeCalledWith(
           {
             info: 0,
-            low: 9,
-            moderate: 0,
-            high: 0,
-            critical: 1
+            low: 0,
+            moderate: 1,
+            high: 2,
+            critical: 0
           },
           'moderate'
         );
         expect(exit).toBeCalledWith(1);
       });
       it('if vulnerabilities does not match severity and are lower than severity then exit(0)', () => {
-        minder.severity = 'moderate';
+        minder.severity = 'high';
         minder.auditFailBuild = 1;
         const getSeverityTypeSpy = jest.spyOn(minder, 'getSeverityType');
         minder.handleResults(`{
-        "metadata":{
-          "vulnerabilities": {
-            "info": 0,
-            "low": 9,
-            "moderate": 0,
-            "high": 0,
-            "critical": 0
+          "advisories": {
+            "443":{
+              "severity": "low"
+            },
+            "886":{
+              "severity": "low"
+            },
+            "903":{
+              "severity": "moderate"
+            }
           }
-        }
-     }`);
+        }`);
         expect(getSeverityTypeSpy).toBeCalledWith(
           {
             info: 0,
-            low: 9,
-            moderate: 0,
+            low: 2,
+            moderate: 1,
             high: 0,
             critical: 0
           },
-          'moderate'
+          'high'
         );
         expect(exit).toBeCalledWith(0);
       });

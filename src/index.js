@@ -3,12 +3,15 @@ import { exit } from 'process';
 import { spawn } from 'child_process';
 import { spawn as npmRunSpwan } from 'npm-run';
 
+import { NPM, YARN } from './constants';
+
 import {
   capitalize,
   formatText,
   handleGetConfig,
   handlePlugin,
-  returnVulnDataFromResponse
+  returnVulnDataFromResponse,
+  filterOutWhiteListedAdvisories
 } from './utils';
 
 export class Auditor {
@@ -16,9 +19,9 @@ export class Auditor {
     this.config = config;
     this.packageManager =
       config['package-manager'] &&
-      config['package-manager'].toLowerCase() === 'yarn'
-        ? 'yarn'
-        : 'npm';
+      config['package-manager'].toLowerCase() === YARN
+        ? YARN
+        : NPM;
     this.registry = (config.registry || '').replace(/[^\w-/.:]/g, '');
     this.severity = ['low', 'moderate', 'high', 'critical'].includes(
       config.severity && config.severity.toLowerCase()
@@ -31,8 +34,11 @@ export class Auditor {
       '-'
     );
     this.auditFailBuild = config['audit-fail-build'] === true ? 1 : 0;
+    this.whitelistedAdvisories = Array.isArray(config['whitelisted-advisories'])
+      ? config['whitelisted-advisories']
+      : [];
 
-    this.isNPM = this.packageManager === 'npm';
+    this.isNPM = this.packageManager === NPM;
   }
 
   getSeverityType(vulnerabilities, severityLevel) {
@@ -74,9 +80,15 @@ export class Auditor {
     try {
       handlePlugin(auditResponse, this.config);
 
+      const filteredRes = filterOutWhiteListedAdvisories(
+        this.packageManager,
+        auditResponse,
+        this.whitelistedAdvisories
+      );
+
       const vulnerabilities = returnVulnDataFromResponse(
         this.packageManager,
-        auditResponse
+        filteredRes
       );
       const severityType = this.getSeverityType(vulnerabilities, this.severity);
 
@@ -120,7 +132,7 @@ export class Auditor {
     if (Object.keys(this.config).length < 1) {
       console.log('No config supplied, using defaults.');
       console.log(
-        'You can configure "minder" by creating an "minder.config.json" file in your projects root folder\n'
+        'You can configure "minder" by creating an "minder.config.json" file in your projects root folder.\n'
       );
     } else {
       console.log('---- Config ----');
