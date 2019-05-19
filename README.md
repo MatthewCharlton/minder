@@ -17,7 +17,7 @@ Example: <br>
 
 ```javascript
 {
-  "severity": "critical",
+  "severity": "high",
   "report": true,
   "html-report-filepath": "audit-report.html",
   "registry": "https://registry.npmjs.org/",
