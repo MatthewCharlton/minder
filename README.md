@@ -28,6 +28,7 @@ registry: choose what registry the audit payload will be sent to <br>
 report: choose to output a HTML report of the audit results <br>
 html-report-filepath: set a custom file name of HTML report, only applicable if "report" is set to true <br>
 audit-fail-build: sets the exit code to 1 when true or 0 when false <br>
+whitelisted-advisories: array of advisory IDs to allow/ignore <br>
 
 If no config file is passed then the following defaults will be used: <br>
 "severity": "critical" <br>
@@ -36,6 +37,7 @@ If no config file is passed then the following defaults will be used: <br>
 "report": false <br>
 "html-report-filepath": "" <br>
 "audit-fail-build": false <br>
+"whitelisted-advisories": [] <br>
 
 **Add plugin** <br>
 minder-plugin.js <br>
