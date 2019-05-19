@@ -2,5 +2,6 @@
   "severity": "high",
   "report": true,
   "html-report-filepath": "minder-report.html",
-  "audit-fail-build": true
+  "audit-fail-build": true,
+  "whitelisted-advisories": ["803"]
 }
