@@ -37,16 +37,17 @@ Example: <br>
 | audit-fail-build       | sets the exit code to 1 when true or 0 when false. Must be one of: `true` or `false`                               |
 | whitelisted-advisories | array of advisory IDs to allow/ignore. Must be an array of strings                                                 |
 
-If no config file is passed then the following defaults will be used: <br>
-| Option | Default value |
-| ------- | ----------- |
-| severity | "critical" |
-| package-manager| "npm" |
-| registry | "" |
-| report | false |
-| html-report-filepath | "" |
-| audit-fail-build | false |
-| whitelisted-advisories | [] |
+If no config file is passed then the following defaults will be used:
+
+| Option                 | Default value |
+| ---------------------- | ------------- |
+| severity               | "critical"    |
+| package-manager        | "npm"         |
+| registry               | ""            |
+| report                 | false         |
+| html-report-filepath   | ""            |
+| audit-fail-build       | false         |
+| whitelisted-advisories | []            |
 
 ### Add a plugin
 
