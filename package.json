@@ -1,6 +1,6 @@
 {
   "name": "minder",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Runs NPM or Yarn audit and can be configured to fail tasks if the audit finds vulnerable packages",
   "main": "dist/index.js",
   "bin": "bin/minder.js",
