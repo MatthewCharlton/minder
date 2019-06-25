@@ -76,9 +76,9 @@ export class Auditor {
       : null;
   }
 
-  handleResults(auditResponse) {
+  async handleResults(auditResponse) {
     try {
-      handlePlugin(auditResponse, this.config);
+      await handlePlugin(auditResponse, this.config);
 
       const filteredRes = filterOutWhiteListedAdvisories(
         this.packageManager,
@@ -209,6 +209,8 @@ export class Auditor {
     }
   }
 }
+
+export { returnVulnDataFromResponse, filterOutWhiteListedAdvisories };
 
 const auditor = new Auditor(handleGetConfig());
 

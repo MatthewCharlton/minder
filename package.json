@@ -1,6 +1,6 @@
 {
   "name": "minder",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Runs NPM or Yarn audit and can be configured to fail tasks if the audit finds vulnerable packages",
   "main": "dist/index.js",
   "bin": "bin/minder.js",
@@ -44,6 +44,7 @@
     "rollup": "^1.11.3"
   },
   "engines": {
-    "npm": ">= 6.0.0"
+    "node": ">=10.0.0",
+    "npm": ">=6.0.0"
   }
 }

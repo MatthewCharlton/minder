@@ -32,7 +32,7 @@ export function handlePlugin(data, config) {
     plugin = () => {};
   }
 
-  plugin(data, config);
+  return plugin(data, config);
 }
 
 export function returnVulnDataFromResponse(packageManager, parsedRes) {
