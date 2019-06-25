@@ -6,7 +6,8 @@
   "bin": "bin/minder.js",
   "files": [
     "/dist",
-    "/bin"
+    "/bin",
+    "README.md"
   ],
   "scripts": {
     "test": "jest --silent --config jest.config.json",
