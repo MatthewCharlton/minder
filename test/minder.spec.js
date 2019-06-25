@@ -114,13 +114,13 @@ describe('Auditor Class', () => {
   });
   describe('handleResults', () => {
     describe('NPM', () => {
-      it('if vulnerabilities does not match severity and are lower than severity then exit(0)', () => {
+      it('if vulnerabilities does not match severity and are lower than severity then exit(0)', async () => {
         minder.packageManager = 'npm';
         minder.isNPM = true;
         minder.severity = 'low';
         minder.auditFailBuild = 1;
         const getSeverityTypeSpy = jest.spyOn(minder, 'getSeverityType');
-        minder.handleResults(noNPMAdvisoriesJSON);
+        await minder.handleResults(noNPMAdvisoriesJSON);
         expect(getSeverityTypeSpy).toBeCalledWith(
           {
             info: 0,
@@ -133,11 +133,11 @@ describe('Auditor Class', () => {
         );
         expect(exit).toBeCalledWith(0);
       });
-      it('if vulnerabilities has matching severity and auditFailBuild = true then exit(1)', () => {
+      it('if vulnerabilities has matching severity and auditFailBuild = true then exit(1)', async () => {
         minder.severity = 'high';
         minder.auditFailBuild = 1;
         const getSeverityTypeSpy = jest.spyOn(minder, 'getSeverityType');
-        minder.handleResults(findingNPMAdvisoryJSON);
+        await minder.handleResults(findingNPMAdvisoryJSON);
         expect(getSeverityTypeSpy).toBeCalledWith(
           {
             info: 0,
@@ -150,11 +150,11 @@ describe('Auditor Class', () => {
         );
         expect(exit).toBeCalledWith(1);
       });
-      it('if vulnerabilities does not match severity but are higher than severity then exit(1)', () => {
+      it('if vulnerabilities does not match severity but are higher than severity then exit(1)', async () => {
         minder.severity = 'moderate';
         minder.auditFailBuild = 1;
         const getSeverityTypeSpy = jest.spyOn(minder, 'getSeverityType');
-        minder.handleResults(`{
+        await minder.handleResults(`{
           "advisories": {
             "112":{
               "severity": "high"
@@ -179,11 +179,11 @@ describe('Auditor Class', () => {
         );
         expect(exit).toBeCalledWith(1);
       });
-      it('if vulnerabilities does not match severity and are lower than severity then exit(0)', () => {
+      it('if vulnerabilities does not match severity and are lower than severity then exit(0)', async () => {
         minder.severity = 'high';
         minder.auditFailBuild = 1;
         const getSeverityTypeSpy = jest.spyOn(minder, 'getSeverityType');
-        minder.handleResults(`{
+        await minder.handleResults(`{
           "advisories": {
             "443":{
               "severity": "low"
@@ -208,9 +208,9 @@ describe('Auditor Class', () => {
         );
         expect(exit).toBeCalledWith(0);
       });
-      it('if audit call fails', () => {
+      it('if audit call fails', async () => {
         const consoleLogSpy = jest.spyOn(console, 'log');
-        minder.handleResults(errorNPMJSON);
+        await minder.handleResults(errorNPMJSON);
         expect(consoleLogSpy).toBeCalledWith(
           `${JSON.parse(errorNPMJSON).error.code}\n${
             JSON.parse(errorNPMJSON).error.summary
@@ -220,13 +220,13 @@ describe('Auditor Class', () => {
       });
     });
     describe('Yarn', () => {
-      it('if vulnerabilities does not match severity and are lower than severity then exit(0)', () => {
+      it('if vulnerabilities does not match severity and are lower than severity then exit(0)', async () => {
         minder.packageManager = 'yarn';
         minder.isNPM = false;
         minder.severity = 'low';
         minder.auditFailBuild = 1;
         const getSeverityTypeSpy = jest.spyOn(minder, 'getSeverityType');
-        minder.handleResults(noYarnAdvisoriesJSON);
+        await minder.handleResults(noYarnAdvisoriesJSON);
         expect(getSeverityTypeSpy).toBeCalledWith(
           {
             info: 0,
