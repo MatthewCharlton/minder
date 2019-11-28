@@ -31,9 +31,9 @@
   },
   "homepage": "https://github.com/MatthewCharlton/minder#readme",
   "dependencies": {
-    "npm-audit-html": "^1.3.2",
+    "npm-audit-html": "^1.4.0",
     "npm-run": "^5.0.1",
-    "yarn-audit-html": "^1.0.2"
+    "yarn-audit-html": "^1.2.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0",
