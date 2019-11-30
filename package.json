@@ -13,6 +13,11 @@
     "test": "jest --silent --config jest.config.json",
     "build": "rollup -c rollup.config.js",
     "minder": "node bin/minder.js",
+    "preversion": "npm run test",
+    "release-patch": "npm version patch --force -m \"Bump patch version %s\"",
+    "release-minor": "npm version minor --force -m \"Bump minor version %s\"",
+    "release-major": "npm version major --force -m \"Bump major version %s\"",
+    "postversion": "git push && git push --tags",
     "release": "npm run test && npm run build && npm run minder && npm publish"
   },
   "repository": {
