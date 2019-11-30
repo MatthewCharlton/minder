@@ -13,7 +13,7 @@ import {
   returnVulnDataFromResponse,
   filterOutWhiteListedAdvisories,
   hasCorrectLockFile,
-  logAffectedDependencies,
+  logAffectedDependencies
 } from './utils';
 
 export class Auditor {

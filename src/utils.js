@@ -58,10 +58,10 @@ export function returnVulnDataFromResponse(packageManager, parsedRes) {
           ...acc,
           [next]: sevArr
             .filter(item => item === next)
-            .reduce(count => count + 1, 0),
+            .reduce(count => count + 1, 0)
         }),
         {}
-      ),
+      )
     };
   }
 
@@ -76,10 +76,10 @@ export function returnVulnDataFromResponse(packageManager, parsedRes) {
         ...acc,
         [next]: sevArr
           .filter(item => item === next)
-          .reduce(count => count + 1, 0),
+          .reduce(count => count + 1, 0)
       }),
       {}
-    ),
+    )
   };
 }
 
@@ -150,14 +150,14 @@ export function filterOutWhiteListedAdvisories(
         }
         return {
           ...acc,
-          [advisory]: advisories[advisory],
+          [advisory]: advisories[advisory]
         };
       },
       {}
     );
     return {
       ...json,
-      advisories: filteredAdvisories,
+      advisories: filteredAdvisories
     };
   }
   return json;
