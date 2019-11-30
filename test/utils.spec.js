@@ -6,7 +6,7 @@ import {
   handleGetConfig,
   filterOutWhiteListedAdvisories,
   returnVulnDataFromResponse,
-  hasCorrectLockFile,
+  hasCorrectLockFile
 } from '../src/utils';
 
 import { findingYarnAdvisoriesJSON } from './fixtures/yarnJSON';
@@ -14,10 +14,10 @@ import { findingNPMAdvisoryJSON } from './fixtures/npmJSON';
 
 jest.mock('fs', () => ({
   readFileSync: jest.fn(),
-  existsSync: jest.fn(),
+  existsSync: jest.fn()
 }));
 jest.mock('process', () => ({
-  cwd: jest.fn().mockReturnValue('/test'),
+  cwd: jest.fn().mockReturnValue('/test')
 }));
 
 describe('Utils', () => {
@@ -65,7 +65,7 @@ describe('Utils', () => {
         low: 0,
         moderate: 0,
         high: 1,
-        critical: 0,
+        critical: 0
       });
     });
     it('return vuln data from Yarn', () => {
@@ -84,7 +84,7 @@ describe('Utils', () => {
         filterOutWhiteListedAdvisories('npm', findingNPMAdvisoryJSON, ['118'])
       ).toStrictEqual({
         ...JSON.parse(findingNPMAdvisoryJSON),
-        advisories: {},
+        advisories: {}
       });
     });
     it('return all advisories if no whitelisted ids present from NPM', () => {

@@ -4,22 +4,22 @@ import { exit } from 'process';
 import {
   noNPMAdvisoriesJSON,
   findingNPMAdvisoryJSON,
-  errorNPMJSON,
+  errorNPMJSON
 } from './fixtures/npmJSON';
 import {
   noYarnAdvisoriesJSON,
-  findingYarnAdvisoriesJSON,
+  findingYarnAdvisoriesJSON
 } from './fixtures/yarnJSON';
 
 jest.mock('process', () => ({
-  exit: jest.fn(),
+  exit: jest.fn()
 }));
 jest.mock('child_process', () => ({
   spawn: jest.fn().mockReturnValue({
     on: jest.fn(),
     stdout: { on: jest.fn(), pipe: jest.fn() },
-    stderr: { on: jest.fn() },
-  }),
+    stderr: { on: jest.fn() }
+  })
 }));
 
 let minder;
@@ -48,7 +48,7 @@ describe('Auditor Class', () => {
         'audit-fail-build': true,
         'html-report-filepath': 'auditor-report.html',
         registry: 'http://registry.yarnpkg.com/',
-        'whitelisted-advisories': ['803'],
+        'whitelisted-advisories': ['803']
       };
       const { Auditor } = require('../src');
       minder = new Auditor(config);
@@ -75,7 +75,7 @@ describe('Auditor Class', () => {
         report: true,
         'audit-fail-build': true,
         'html-report-filepath': 'auditor-report.html',
-        registry: 'http://registry.yarnpkg.com/',
+        registry: 'http://registry.yarnpkg.com/'
       };
       const { Auditor } = require('../src');
       const minder = new Auditor(config);
@@ -85,7 +85,7 @@ describe('Auditor Class', () => {
       expect(spawn).toBeCalledWith('npm', [
         'audit',
         '--json',
-        '--registry=http://registry.yarnpkg.com/',
+        '--registry=http://registry.yarnpkg.com/'
       ]);
     });
   });
@@ -97,7 +97,7 @@ describe('Auditor Class', () => {
         low: 9,
         moderate: 1,
         high: 7,
-        critical: 2,
+        critical: 2
       };
       const severity = minder.getSeverityType(vulnerabilities, minder.severity);
       expect(severity).toBe(minder.severity);
@@ -108,7 +108,7 @@ describe('Auditor Class', () => {
         low: 9,
         moderate: 1,
         high: 0,
-        critical: 2,
+        critical: 2
       };
       minder.severity = 'high';
       const severity = minder.getSeverityType(vulnerabilities, minder.severity);
@@ -130,7 +130,7 @@ describe('Auditor Class', () => {
             low: 0,
             moderate: 0,
             high: 0,
-            critical: 0,
+            critical: 0
           },
           'low'
         );
@@ -147,7 +147,7 @@ describe('Auditor Class', () => {
             low: 0,
             moderate: 0,
             high: 1,
-            critical: 0,
+            critical: 0
           },
           'high'
         );
@@ -165,7 +165,7 @@ describe('Auditor Class', () => {
             low: 2,
             moderate: 1,
             high: 2,
-            critical: 0,
+            critical: 0
           },
           'high'
         );
@@ -194,7 +194,7 @@ describe('Auditor Class', () => {
             low: 0,
             moderate: 1,
             high: 2,
-            critical: 0,
+            critical: 0
           },
           'moderate'
         );
@@ -223,7 +223,7 @@ describe('Auditor Class', () => {
             low: 2,
             moderate: 1,
             high: 0,
-            critical: 0,
+            critical: 0
           },
           'high'
         );
@@ -254,7 +254,7 @@ describe('Auditor Class', () => {
             low: 0,
             moderate: 0,
             high: 0,
-            critical: 0,
+            critical: 0
           },
           'low'
         );
