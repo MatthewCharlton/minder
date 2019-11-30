@@ -27,8 +27,8 @@ export function formatText(str) {
 
 export function handleGetConfig() {
   try {
-    return JSON.parse(readFileSync(`${cwd()}/minder.config.json`));
-  } catch (ignore) {
+    return JSON.parse(readFileSync('./minder.config.json'));
+  } catch (_) {
     return {};
   }
 }
