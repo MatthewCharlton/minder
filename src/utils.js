@@ -87,23 +87,22 @@ export function logAffectedDependencies(packageManager, parsedRes) {
   console.log('\nThe following dependencies should be reviewed:\n');
   if (packageManager === YARN) {
     parsedRes
-      .filter(item => item.type === 'warning')
+      .filter(item => item.type === 'auditAdvisory')
       .map(item => {
-        console.log(item.data);
+        const moduleObj = item.data.advisory;
+        console.log(`-----  Module name: ${moduleObj.module_name} -----`);
+        console.log(`Affected version/s: ${moduleObj.vulnerable_versions}`);
+        console.log(moduleObj.overview);
+        if (moduleObj.findings && moduleObj.findings.length) {
+          const modulePaths = moduleObj.findings.map(
+            item =>
+              `Version ${item.version} located: ${item.paths.join(', ')}\n`
+          );
+          console.log(`Path/s to affected module: ${modulePaths}`);
+        }
+        moduleObj.url && console.log(`For more info visit: ${moduleObj.url}`);
+        console.log('---------------------------\n');
       });
-
-    // Object.keys(parsedRes.advisories).forEach(item => {
-    //   const moduleObj = parsedRes.advisories[item];
-    //   console.log(
-    //     `Module name: ${moduleObj.module_name}, version\s: ${moduleObj.vulnerable_versions}`
-    //   );
-    //   console.log(moduleObj.overview);
-    //   const modulePaths = moduleObj.findings.map(
-    //     item => `Version ${item.version} located: ${item.paths.join(", ")}\n`
-    //   );
-    //   console.log(`Path/s to affected module: ${modulePaths}`);
-    //   moduleObj.url && console.log(`For more info visit: ${moduleObj.url}`);
-    // });
     return;
   }
 
