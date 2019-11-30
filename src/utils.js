@@ -86,7 +86,7 @@ export function returnVulnDataFromResponse(packageManager, parsedRes) {
 export function logAffectedDependencies(packageManager, parsedRes) {
   console.log('\nThe following dependencies should be reviewed:\n');
   const template = moduleObj => {
-    console.log(`-----  Module name: ${moduleObj.module_name} -----`);
+    console.log(`----- Module name: ${moduleObj.module_name} -----`);
     console.log(`Affected version/s: ${moduleObj.vulnerable_versions}`);
     console.log(moduleObj.overview);
     if (moduleObj.findings && moduleObj.findings.length) {
