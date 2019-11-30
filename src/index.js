@@ -107,10 +107,10 @@ export class Auditor {
           )}`
         );
 
-        if (!this.report) {
-          logAffectedDependencies(this.packageManager, filteredRes);
-        } else {
+        if (this.report) {
           this.outputLog();
+        } else {
+          logAffectedDependencies(this.packageManager, filteredRes);
         }
         exit(this.auditFailBuild);
       } else {

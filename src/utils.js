@@ -14,7 +14,7 @@ export function hasCorrectLockFile(packageManager) {
   } else {
     lockfileName = 'package-lock.json';
   }
-  return !!existsSync(`./${lockfileName}`);
+  return existsSync(`./${lockfileName}`);
 }
 
 export function formatText(str) {
