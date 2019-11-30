@@ -1,10 +1,20 @@
 import { cwd } from 'process';
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 
 import { YARN, NO_VULNS_OBJECT } from './constants';
 
 export function capitalize(str) {
   return `${str.charAt(0).toUpperCase()}${str.slice(1)}`;
+}
+
+export function hasCorrectLockFile(packageManager) {
+  let lockfileName = '';
+  if (packageManager === YARN) {
+    lockfileName = 'yarn.lock';
+  } else {
+    lockfileName = 'package-lock.json';
+  }
+  return existsSync(`./${lockfileName}`);
 }
 
 export function formatText(str) {
@@ -17,8 +27,8 @@ export function formatText(str) {
 
 export function handleGetConfig() {
   try {
-    return JSON.parse(readFileSync(`${cwd()}/minder.config.json`));
-  } catch (ignore) {
+    return JSON.parse(readFileSync('./minder.config.json'));
+  } catch (_) {
     return {};
   }
 }
@@ -71,6 +81,38 @@ export function returnVulnDataFromResponse(packageManager, parsedRes) {
       {}
     )
   };
+}
+
+export function logAffectedDependencies(packageManager, parsedRes) {
+  console.log('\nThe following dependencies should be reviewed:\n');
+  const template = moduleObj => {
+    console.log(`----- Module name: ${moduleObj.module_name} -----`);
+    console.log(`Affected version/s: ${moduleObj.vulnerable_versions}`);
+    console.log(moduleObj.overview);
+    if (moduleObj.findings && moduleObj.findings.length) {
+      const modulePaths = moduleObj.findings.map(
+        item => `Version ${item.version} located: ${item.paths.join(', ')}\n`
+      );
+      console.log(`Path/s to affected module: ${modulePaths}`);
+    }
+    moduleObj.url && console.log(`For more info visit: ${moduleObj.url}`);
+    console.log('---------------------------\n');
+  };
+  if (packageManager === YARN) {
+    parsedRes
+      .filter(item => item.type === 'auditAdvisory')
+      .map(item => {
+        const moduleObj = item.data.advisory;
+        template(moduleObj);
+      });
+    return;
+  }
+
+  Object.keys(parsedRes.advisories).forEach(item => {
+    const moduleObj = parsedRes.advisories[item];
+    template(moduleObj);
+  });
+  return;
 }
 
 export function filterOutWhiteListedAdvisories(

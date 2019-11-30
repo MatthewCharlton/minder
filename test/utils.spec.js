@@ -1,18 +1,20 @@
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 
 import {
   capitalize,
   formatText,
   handleGetConfig,
   filterOutWhiteListedAdvisories,
-  returnVulnDataFromResponse
+  returnVulnDataFromResponse,
+  hasCorrectLockFile
 } from '../src/utils';
 
 import { findingYarnAdvisoriesJSON } from './fixtures/yarnJSON';
 import { findingNPMAdvisoryJSON } from './fixtures/npmJSON';
 
 jest.mock('fs', () => ({
-  readFileSync: jest.fn()
+  readFileSync: jest.fn(),
+  existsSync: jest.fn()
 }));
 jest.mock('process', () => ({
   cwd: jest.fn().mockReturnValue('/test')
@@ -21,6 +23,13 @@ jest.mock('process', () => ({
 describe('Utils', () => {
   describe('capitalize', () => {
     expect(capitalize('hello there')).toEqual('Hello there');
+  });
+
+  describe('hasCorrectLockFile', () => {
+    hasCorrectLockFile('npm');
+    expect(existsSync).toBeCalledWith('./package-lock.json');
+    hasCorrectLockFile('yarn');
+    expect(existsSync).toBeCalledWith('./yarn.lock');
   });
 
   describe('formatText', () => {

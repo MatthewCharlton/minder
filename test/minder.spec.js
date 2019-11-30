@@ -6,7 +6,10 @@ import {
   findingNPMAdvisoryJSON,
   errorNPMJSON
 } from './fixtures/npmJSON';
-import { noYarnAdvisoriesJSON } from './fixtures/yarnJSON';
+import {
+  noYarnAdvisoriesJSON,
+  findingYarnAdvisoriesJSON
+} from './fixtures/yarnJSON';
 
 jest.mock('process', () => ({
   exit: jest.fn()
@@ -144,6 +147,24 @@ describe('Auditor Class', () => {
             low: 0,
             moderate: 0,
             high: 1,
+            critical: 0
+          },
+          'high'
+        );
+        expect(exit).toBeCalledWith(1);
+      });
+      it('if vulnerabilities has matching severity and auditFailBuild = true then exit(1) - yarn', async () => {
+        minder.severity = 'high';
+        minder.packageManager = 'yarn';
+        minder.auditFailBuild = 1;
+        const getSeverityTypeSpy = jest.spyOn(minder, 'getSeverityType');
+        await minder.handleResults(findingYarnAdvisoriesJSON);
+        expect(getSeverityTypeSpy).toBeCalledWith(
+          {
+            info: 0,
+            low: 2,
+            moderate: 1,
+            high: 2,
             critical: 0
           },
           'high'
