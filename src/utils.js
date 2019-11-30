@@ -1,10 +1,20 @@
 import { cwd } from 'process';
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 
 import { YARN, NO_VULNS_OBJECT } from './constants';
 
 export function capitalize(str) {
   return `${str.charAt(0).toUpperCase()}${str.slice(1)}`;
+}
+
+export function hasCorrectLockFile(packageManager) {
+  let lockfileName = '';
+  if (packageManager === YARN) {
+    lockfileName = 'yarn.lock';
+  } else {
+    lockfileName = 'package-lock.json';
+  }
+  return !!existsSync(`./${lockfileName}`);
 }
 
 export function formatText(str) {
@@ -48,10 +58,10 @@ export function returnVulnDataFromResponse(packageManager, parsedRes) {
           ...acc,
           [next]: sevArr
             .filter(item => item === next)
-            .reduce(count => count + 1, 0)
+            .reduce(count => count + 1, 0),
         }),
         {}
-      )
+      ),
     };
   }
 
@@ -66,11 +76,52 @@ export function returnVulnDataFromResponse(packageManager, parsedRes) {
         ...acc,
         [next]: sevArr
           .filter(item => item === next)
-          .reduce(count => count + 1, 0)
+          .reduce(count => count + 1, 0),
       }),
       {}
-    )
+    ),
   };
+}
+
+export function logAffectedDependencies(packageManager, parsedRes) {
+  console.log('\nThe following dependencies should be reviewed:\n');
+  if (packageManager === YARN) {
+    parsedRes
+      .filter(item => item.type === 'warning')
+      .map(item => {
+        console.log(item.data);
+      });
+
+    // Object.keys(parsedRes.advisories).forEach(item => {
+    //   const moduleObj = parsedRes.advisories[item];
+    //   console.log(
+    //     `Module name: ${moduleObj.module_name}, version\s: ${moduleObj.vulnerable_versions}`
+    //   );
+    //   console.log(moduleObj.overview);
+    //   const modulePaths = moduleObj.findings.map(
+    //     item => `Version ${item.version} located: ${item.paths.join(", ")}\n`
+    //   );
+    //   console.log(`Path/s to affected module: ${modulePaths}`);
+    //   moduleObj.url && console.log(`For more info visit: ${moduleObj.url}`);
+    // });
+    return;
+  }
+
+  Object.keys(parsedRes.advisories).forEach(item => {
+    const moduleObj = parsedRes.advisories[item];
+    console.log(`-----  Module name: ${moduleObj.module_name} -----`);
+    console.log(`Affected version/s: ${moduleObj.vulnerable_versions}`);
+    console.log(moduleObj.overview);
+    if (moduleObj.findings && moduleObj.findings.length) {
+      const modulePaths = moduleObj.findings.map(
+        item => `Version ${item.version} located: ${item.paths.join(', ')}\n`
+      );
+      console.log(`Path/s to affected module: ${modulePaths}`);
+    }
+    moduleObj.url && console.log(`For more info visit: ${moduleObj.url}`);
+    console.log('---------------------------\n');
+  });
+  return;
 }
 
 export function filterOutWhiteListedAdvisories(
@@ -100,14 +151,14 @@ export function filterOutWhiteListedAdvisories(
         }
         return {
           ...acc,
-          [advisory]: advisories[advisory]
+          [advisory]: advisories[advisory],
         };
       },
       {}
     );
     return {
       ...json,
-      advisories: filteredAdvisories
+      advisories: filteredAdvisories,
     };
   }
   return json;

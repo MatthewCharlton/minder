@@ -11,7 +11,9 @@ import {
   handleGetConfig,
   handlePlugin,
   returnVulnDataFromResponse,
-  filterOutWhiteListedAdvisories
+  filterOutWhiteListedAdvisories,
+  hasCorrectLockFile,
+  logAffectedDependencies,
 } from './utils';
 
 export class Auditor {
@@ -100,15 +102,20 @@ export class Auditor {
 
       if (severityType.toUpperCase() === this.severity.toUpperCase()) {
         console.log(
-          `Audit failed: there are packages that have vulnerabilities that match your configured fail criteria: ${capitalize(
+          `Audit failed! There are packages that have vulnerabilities that match your configured fail criteria: ${capitalize(
             this.severity
           )}`
         );
-        this.outputLog();
+
+        if (!this.report) {
+          logAffectedDependencies(this.packageManager, filteredRes);
+        } else {
+          this.outputLog();
+        }
         exit(this.auditFailBuild);
       } else {
         console.log('Audit passed');
-        this.outputLog();
+        if (this.report) this.outputLog();
         exit(0);
       }
     } catch (e) {
@@ -127,7 +134,15 @@ export class Auditor {
   }
 
   runAudit() {
-    console.log('\n *** Auditor *** \n');
+    console.log(`
+    ███╗   ███╗██╗███╗   ██╗██████╗ ███████╗██████╗ 
+    ████╗ ████║██║████╗  ██║██╔══██╗██╔════╝██╔══██╗
+    ██╔████╔██║██║██╔██╗ ██║██║  ██║█████╗  ██████╔╝
+    ██║╚██╔╝██║██║██║╚██╗██║██║  ██║██╔══╝  ██╔══██╗
+    ██║ ╚═╝ ██║██║██║ ╚████║██████╔╝███████╗██║  ██║
+    ╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═════╝ ╚══════╝╚═╝  ╚═╝                                   
+    `);
+    console.log('                   Dependency auditor\n\n');
 
     if (Object.keys(this.config).length < 1) {
       console.log('No config supplied, using defaults.');
@@ -159,6 +174,15 @@ export class Auditor {
         );
         console.log('---------------\n');
       }
+    }
+
+    if (!hasCorrectLockFile(this.packageManager)) {
+      console.log(
+        'No lockfile found for your configured package manager:',
+        this.packageManager,
+        '\n'
+      );
+      exit(1);
     }
 
     console.log('--- Command ---');
